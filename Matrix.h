@@ -24,7 +24,7 @@ public:
 	int get_n() const;
 	int get_id() const;
 
-	void get_size(int n, int m);
+	void set_size(int n, int m);
 
 	const Matrix& operator=(const Matrix& other);
 

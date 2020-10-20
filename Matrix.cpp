@@ -8,8 +8,7 @@ int Matrix::static_id = 0;
 
 Matrix::Matrix(int n, int m, double* matrix) {
 	this->id = ++static_id;
-	this->n = n;
-	this->m = m;
+	this->set_size(n, m);
 	this->matrix = new double[n * m];
 	if (matrix != nullptr) {
 		for (int i = 0; i < this->n; i++)
@@ -30,8 +29,7 @@ Matrix::Matrix() : Matrix::Matrix(2, 2) {}
 
 Matrix::Matrix(const Matrix& other) {
 	this->id = ++static_id;
-	this->n = other.n;
-	this->m = other.m;
+	this->set_size(other.n, other.m);
 	this->matrix = new double[other.n * other.m];
 	for (int i = 0; i < other.n; i++)
 		for (int j = 0; j < other.m; j++)
@@ -75,8 +73,20 @@ int Matrix::get_m() const { return this->m; }
 int Matrix::get_n() const { return this->n; }
 int Matrix::get_id() const { return this->id; }
 
-const Matrix& Matrix::operator=(const Matrix& other) {
+void Matrix::set_size(int n, int m) {
+	this->n = n;
+	this->m = m;
+}
 
+const Matrix& Matrix::operator=(const Matrix& other) {
+	if (this == &other) return *this;
+	this->set_size(other.n, other.m);
+	if (this->matrix != nullptr) delete this->matrix;
+	this->matrix = new double[other.n * other.m];
+	for (int i = 0; i < other.n; i++)
+		for (int j = 0; j < other.m; j++)
+			*(this->matrix + i * other.n + j) = *(other.matrix + i * other.m + j);
+	return *this;
 }
 
 ostream& operator << (ostream& out, Matrix& matrix) {
