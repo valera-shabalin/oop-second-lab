@@ -27,6 +27,7 @@ public:
 	int get_n() const;
 	int get_size() const;
 	int get_id() const;
+	double* get_matrix() const;
 
 	/* Сетторы */
 	void set_size(int n, int m);
@@ -35,13 +36,16 @@ public:
 	const Matrix& operator=(const Matrix& other);
 	const Matrix& operator+=(const Matrix& other);
 	const Matrix& operator-=(const Matrix& other);
+	//const Matrix& operator*=(const Matrix& other);
 	const Matrix& operator*=(double k);
 
 	friend std::ostream& operator << (std::ostream& out, Matrix& matrix);
 };
 
 /* Внешнии функции */
-double* create_matrix(int const n, int const m);
+double* create_matrix(int n, int m);
+Matrix summ_matrix(const Matrix& f_matrix, const Matrix& s_matrix);
+Matrix diff_matrix(const Matrix& f_matrix, const Matrix& s_matrix);
 
 #endif
 

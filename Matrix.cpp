@@ -24,11 +24,13 @@ Matrix::Matrix(int n, int m, double* matrix) {
 	cout << "Конструктор " << this->id << endl;
 }
 
-/* Конструкторы по-умолчанию */
+/* Конструктор */
 Matrix::Matrix(int n) : Matrix::Matrix(n, n) {}
-Matrix::Matrix() : Matrix::Matrix(2, 2) {}
 
-/* Копирующие конструкторы */
+/* Конструкторы по-умолчанию */
+Matrix::Matrix() : Matrix::Matrix(0, 0) {}
+
+/* Копирующий конструктор */
 Matrix::Matrix(const Matrix& other) {
 	this->id = ++static_id;
 	this->set_size(other.n, other.m);
@@ -50,7 +52,7 @@ Matrix::~Matrix() {
 
 /* Метод для проверки возможности умножения */
 bool Matrix::allow_multiply(const Matrix& other) const {
-	return this->n == other.get_m() ? true : false;
+	return this->n == other.m ? true : false;
 }
 
 /* Метод для проверки возможности сложения */
@@ -83,6 +85,7 @@ int Matrix::get_m() const { return this->m; }
 int Matrix::get_n() const { return this->n; }
 int Matrix::get_size() const { return this->n * this->m; }
 int Matrix::get_id() const { return this->id; }
+double* Matrix::get_matrix() const { return this->matrix; }
 
 /* Сеттеры */
 void Matrix::set_size(int n, int m) {
@@ -104,7 +107,7 @@ const Matrix& Matrix::operator=(const Matrix& other) {
 
 /* Перегрузка оператора += */
 const Matrix& Matrix::operator+=(const Matrix& other) {
-	if (!this->allow_summ(other)) throw "operator+= - Попытка сложить матрицы разных размеров";
+	if (!this->allow_summ(other)) throw "operator+= - Попытка сложения матриц разных размеров";
 	if (other.matrix == nullptr) throw "operator+= - Матрица пустая";
 	for (int i = 0; i < this->n; i++)
 		for (int j = 0; j < this->m; j++)
@@ -114,14 +117,25 @@ const Matrix& Matrix::operator+=(const Matrix& other) {
 
 /* Перегрузка оператора -= */
 const Matrix& Matrix::operator-=(const Matrix& other) {
-	if (!this->allow_summ(other)) throw "operator-= - Попытка вычитания матрицы разных размеров";
+	if (!this->allow_summ(other)) throw "operator-= - Попытка вычитания матриц разных размеров";
 	if (other.matrix == nullptr) throw "operator-= - Матрица пустая";
 	for (int i = 0; i < this->n; i++)
 		for (int j = 0; j < this->m; j++)
 			*(this->matrix + i * this->n + j) -= *(other.matrix + i * this->n + j);
 	return *this;
 }
-/* Перегрузка оператора *= */
+
+/* Перегрузка оператора *= */ // TODO
+/*const Matrix& Matrix::operator*=(const Matrix& other) {
+	if (!this->allow_multiply(other)) throw "operator-= - Попытка перемножения матриц разных размеров";
+	if (other.matrix == nullptr) throw "operator-= - Матрица пустая";
+	for (int i = 0; i < this->n; i++)
+		for (int j = 0; j < this->m; j++)
+			*(this->matrix + i * this->n + j) -= *(other.matrix + i * this->n + j);
+	return *this;
+}*/
+
+/* Перегрузка оператора *= для скаляра */
 const Matrix& Matrix::operator*=(double k) {
 	for (int i = 0; i < this->n; i++)
 		for (int j = 0; j < this->m; j++)
@@ -142,7 +156,7 @@ ostream& operator << (ostream& out, Matrix& matrix) {
 }
 
 /* Функция для создания матрицы */
-double* create_matrix(int const n, int const m) {
+double* create_matrix(int n, int m) {
 	double* matrix = new double[n * m], x = 0;
 	cout << "Заполните матрицу: ";
 	for (int i = 0; i < n; i++) {
@@ -152,6 +166,28 @@ double* create_matrix(int const n, int const m) {
 		}
 	}
 	return matrix;
+}
+
+/* Функция сложения двух матриц */
+Matrix summ_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
+	if (!f_matrix.allow_summ(s_matrix)) throw "summ_matrix - Попытка сложения матриц разных размеров";
+	int n = f_matrix.get_n(), m = f_matrix.get_m();
+	double* matrix = new double[n * m];
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			*(matrix + i * n + j) = *(f_matrix.get_matrix() + i * n + j) + *(s_matrix.get_matrix() + i * n + j);
+	return Matrix(n, m, matrix);
+}
+
+/* Функция вычитания двух матриц */
+Matrix diff_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
+	if (!f_matrix.allow_summ(s_matrix)) throw "summ_matrix - Попытка вычитания матриц разных размеров";
+	int n = f_matrix.get_n(), m = f_matrix.get_m();
+	double* matrix = new double[n * m];
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			*(matrix + i * n + j) = *(f_matrix.get_matrix() + i * n + j) - *(s_matrix.get_matrix() + i * n + j);
+	return Matrix(n, m, matrix);
 }
 
 
