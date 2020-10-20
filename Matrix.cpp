@@ -69,10 +69,13 @@ double Matrix::get_min() const {
 	return min;
 }
 
+/* Геттеры */
 int Matrix::get_m() const { return this->m; }
 int Matrix::get_n() const { return this->n; }
+int Matrix::get_size() const { return this->n * this->m; }
 int Matrix::get_id() const { return this->id; }
 
+/* Сеттеры */
 void Matrix::set_size(int n, int m) {
 	this->n = n;
 	this->m = m;
@@ -86,6 +89,14 @@ const Matrix& Matrix::operator=(const Matrix& other) {
 	for (int i = 0; i < other.n; i++)
 		for (int j = 0; j < other.m; j++)
 			*(this->matrix + i * other.n + j) = *(other.matrix + i * other.m + j);
+	return *this;
+}
+
+const Matrix& Matrix::operator+=(const Matrix& other) {
+	if (this->get_size() != other.get_size()) throw "Попытка сложить матрицы с разными размерами";
+	for (int i = 0; i < this->n; i++)
+		for (int j = 0; j < this->m; j++)
+			*(this->matrix + i * this->n + j) = *(other.matrix + i * this->n + j);
 	return *this;
 }
 

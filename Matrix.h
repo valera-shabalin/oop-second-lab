@@ -22,11 +22,13 @@ public:
 	double get_min() const;
 	int get_m() const;
 	int get_n() const;
+	int get_size() const;
 	int get_id() const;
 
 	void set_size(int n, int m);
 
 	const Matrix& operator=(const Matrix& other);
+	const Matrix& operator+=(const Matrix& other);
 
 	friend std::ostream& operator << (std::ostream& out, Matrix& matrix);
 };
