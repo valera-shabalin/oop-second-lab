@@ -75,6 +75,10 @@ int Matrix::get_m() const { return this->m; }
 int Matrix::get_n() const { return this->n; }
 int Matrix::get_id() const { return this->id; }
 
+const Matrix& Matrix::operator=(const Matrix& other) {
+
+}
+
 ostream& operator << (ostream& out, Matrix& matrix) {
 	out << matrix.id << " матрица: " << endl;
 	for (int i = 0; i < matrix.n; i++) {
