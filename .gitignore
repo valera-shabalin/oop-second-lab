@@ -2,5 +2,5 @@
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.users
-/Debug
-/.vs
+Debug
+.vs
