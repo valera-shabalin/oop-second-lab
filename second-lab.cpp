@@ -10,7 +10,7 @@ int main()
 	setlocale(LC_CTYPE, "Rus");
 
 	/* Инициализация переменных */
-	int n = 0, m = 0;
+	size_t n = 0, m = 0;
 
 	cout << "Введите размеры матрицы: ";
 	cin >> n >> m;

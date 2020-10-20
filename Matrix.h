@@ -4,14 +4,14 @@
 class Matrix
 {
 private:
-	static int static_id;
+	static size_t static_id;
 
 	double* matrix = nullptr;
-	int n = 0, m = 0, id = 0;
+	size_t n = 0, m = 0, id = 0;
 public:
 	/* Конструкторы и деструктор */
-	Matrix(int n, int m, double* matrix = nullptr);
-	Matrix(int n);
+	Matrix(size_t n, size_t m, double* matrix = nullptr);
+	Matrix(size_t n);
 	Matrix();
 	Matrix(const Matrix& other);
 	~Matrix();
@@ -19,6 +19,7 @@ public:
 	/* Методы */
 	bool allow_multiply(const Matrix& other) const;
 	bool allow_summ(const Matrix& other) const;
+	bool is_empty() const;
 
 	/* Геттеры */
 	double get_max() const;
@@ -28,9 +29,6 @@ public:
 	int get_size() const;
 	int get_id() const;
 	double* get_matrix() const;
-
-	/* Сетторы */
-	void set_size(int n, int m);
 
 	/* Перегрузки операторов */
 	const Matrix& operator=(const Matrix& other);
@@ -43,7 +41,7 @@ public:
 };
 
 /* Внешнии функции */
-double* create_matrix(int n, int m);
+double* create_matrix(size_t n, size_t m);
 Matrix summ_matrix(const Matrix& f_matrix, const Matrix& s_matrix);
 Matrix diff_matrix(const Matrix& f_matrix, const Matrix& s_matrix);
 Matrix scalar_multiply_matrix(const Matrix& matrix, double k);
