@@ -26,12 +26,13 @@ int main()
 	/* Проверка внешних функций */
 	Matrix summ = summ_matrix(e_matrix, g_matrix);
 	Matrix diff = diff_matrix(e_matrix, g_matrix);
+	Matrix scalar = scalar_multiply_matrix(e_matrix, 5);
 
 	/* Проверка перегрузки операторов */
 	s_matrix += g_matrix;
 	e_matrix -= g_matrix;
 	s_matrix *= 5;
-	cout << s_matrix << e_matrix << g_matrix << diff;
+	cout << s_matrix << e_matrix << g_matrix << diff << scalar;
 
 	return 0;
 }

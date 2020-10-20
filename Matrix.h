@@ -46,6 +46,7 @@ public:
 double* create_matrix(int n, int m);
 Matrix summ_matrix(const Matrix& f_matrix, const Matrix& s_matrix);
 Matrix diff_matrix(const Matrix& f_matrix, const Matrix& s_matrix);
+Matrix scalar_multiply_matrix(const Matrix& matrix, double k);
 
 #endif
 

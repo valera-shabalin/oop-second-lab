@@ -181,13 +181,24 @@ Matrix summ_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
 
 /* Функция вычитания двух матриц */
 Matrix diff_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
-	if (!f_matrix.allow_summ(s_matrix)) throw "summ_matrix - Попытка вычитания матриц разных размеров";
+	if (!f_matrix.allow_summ(s_matrix)) throw "diff_matrix - Попытка вычитания матриц разных размеров";
 	int n = f_matrix.get_n(), m = f_matrix.get_m();
 	double* matrix = new double[n * m];
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)
 			*(matrix + i * n + j) = *(f_matrix.get_matrix() + i * n + j) - *(s_matrix.get_matrix() + i * n + j);
 	return Matrix(n, m, matrix);
+}
+
+/* Функция умножения матрицы на скаляр */
+Matrix scalar_multiply_matrix(const Matrix& matrix, double k) {
+	if (matrix.get_matrix() == nullptr) throw "scalar_multiply_matrix - Пустая матрица";
+	int n = matrix.get_n(), m = matrix.get_m();
+	double* new_matrix = new double[n * m];
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			*(new_matrix + i * n + j) = *(matrix.get_matrix() + i * n + j) * k;
+	return Matrix(n, m, new_matrix);
 }
 
 
