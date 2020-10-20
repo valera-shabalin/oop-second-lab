@@ -25,6 +25,8 @@ int main()
 
 	/* Проверка перегрузки операторов */
 	f_matrix += g_matrix;
+	s_matrix -= g_matrix;
+	f_matrix *= 5;
 	cout << f_matrix << s_matrix << e_matrix << g_matrix;
 
 	return 0;
