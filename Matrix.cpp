@@ -6,7 +6,7 @@ using namespace std;
 
 int Matrix::static_id = 0;
 
-Matrix::Matrix(int const n, int const m, double* const matrix) {
+Matrix::Matrix(int n, int m, double* matrix) {
 	this->id = ++static_id;
 	this->n = n;
 	this->m = m;
@@ -24,12 +24,19 @@ Matrix::Matrix(int const n, int const m, double* const matrix) {
 	cout << "Конструктор " << this->id << endl;
 }
 
-Matrix::Matrix(int const n) : Matrix::Matrix(n, n) {}
+Matrix::Matrix(int n) : Matrix::Matrix(n, n) {}
 
-Matrix::Matrix() : Matrix::Matrix(0, 0) {}
+Matrix::Matrix() : Matrix::Matrix(2, 2) {}
 
-Matrix::Matrix(Matrix& const other) {
-
+Matrix::Matrix(const Matrix& other) {
+	this->id = ++static_id;
+	this->n = other.n;
+	this->m = other.m;
+	this->matrix = new double[other.n * other.m];
+	for (int i = 0; i < other.n; i++)
+		for (int j = 0; j < other.m; j++)
+			*(this->matrix + i * other.n + j) = *(other.matrix + i * other.n + j);
+	cout << "Конструктор копирования " << this->id << endl;
 }
 
 Matrix::~Matrix() {
@@ -40,11 +47,11 @@ Matrix::~Matrix() {
 	cout << "Деструктор " << this->id << endl;
 }
 
-bool Matrix::allow_multiply(Matrix& const other) const {
+bool Matrix::allow_multiply(const Matrix& other) const {
 	return this->n == other.get_m() ? true : false;
 }
 
-bool Matrix::allow_summ(Matrix& const other) const {
+bool Matrix::allow_summ(const Matrix& other) const {
 	return (this->n == other.get_n()) && (this->m == other.get_m()) ? true : false;
 }
 

@@ -9,14 +9,14 @@ private:
 	double* matrix = nullptr;
 	int n = 0, m = 0, id = 0;
 public:
-	Matrix(int const n, int const m, double* const matrix = nullptr);
-	Matrix(int const n);
+	Matrix(int n, int m, double* matrix = nullptr);
+	Matrix(int n);
 	Matrix();
-	Matrix(Matrix& const other);
+	Matrix(const Matrix& other);
 	~Matrix();
 
-	bool allow_multiply(Matrix& const other) const;
-	bool allow_summ(Matrix& const other) const;
+	bool allow_multiply(const Matrix& other) const;
+	bool allow_summ(const Matrix& other) const;
 
 	double get_max() const;
 	double get_min() const;

@@ -18,10 +18,10 @@ int main()
 
 	Matrix f_matrix = Matrix();
 	Matrix s_matrix = Matrix(2);
-	/* Matrix t_matrix = Matrix(array); */
 	Matrix e_matrix = Matrix(n, m, array);
+	Matrix g_matrix = Matrix(e_matrix);
 
-	cout << f_matrix << s_matrix << e_matrix;
+	cout << f_matrix << s_matrix << e_matrix << g_matrix;
 
 	return 0;
 }
