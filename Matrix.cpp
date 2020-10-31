@@ -14,10 +14,10 @@ Matrix::Matrix(size_t n, size_t m, double* matrix) {
 	this->m = m;
 	this->matrix = new double[n * m];
 	if (matrix != nullptr)
-		for (int i = 0; i < this->get_size(); i++)
+		for (size_t i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) = *(matrix + i);
 	else
-		for (int i = 0; i < n * m; i++)
+		for (size_t i = 0; i < n * m; i++)
 			*(this->matrix + i) = 0;
 	if (debug) cout << "Конструктор " << this->id << endl;
 }
@@ -111,7 +111,7 @@ const Matrix& Matrix::operator=(const Matrix& other) {
 }
 
 /* Перемещающий оператор = */
-Matrix& Matrix::operator=(Matrix&& other) {
+Matrix& Matrix::operator=(Matrix&& other) noexcept {
 	std::swap(this->matrix, other.matrix);
 	std::swap(this->n, other.n);
 	std::swap(this->m, other.m);
@@ -174,6 +174,20 @@ ostream& operator << (ostream& out, Matrix& matrix) {
 	return out;
 }
 
+/* Перегрузка оператора [] */
+Row Matrix::operator[](size_t x) {
+	return Row(*this, x); 
+}
+
+double Row::operator[](size_t x) { 
+	return owner->cell(this->index, x); 
+}
+
+/* Получить ячеейку матрицы */
+double Matrix::cell(size_t x, size_t y) {
+	return *(this->matrix + x * this->n + y);
+}
+
 /* Функция для создания матрицы */
 double* create_matrix(size_t n, size_t m) {
 	double* matrix = new double[n * m], x = 0;
@@ -227,6 +241,12 @@ Matrix scalar_multiply_matrix(const Matrix& matrix, double k) {
 	for (size_t i = 0; i < n * m; i++)
 		*(new_matrix + i) = *(matrix.get_matrix() + i) * k;
 	return Matrix(n, m, new_matrix);
+}
+
+/* Конструктор для строки */
+Row::Row(Matrix& owner, size_t i) {
+	this->owner = &owner;
+	this->index = i;
 }
 
 

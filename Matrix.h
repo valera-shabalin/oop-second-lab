@@ -1,6 +1,18 @@
 ﻿#ifndef MATRIX_H
 #define MATRIX_H
 
+class Row {
+	friend class Row;
+private:
+	size_t index;
+	class Matrix* owner;
+public:
+	/* Конструктор */
+	Row(Matrix& owner, size_t i);
+	/* Перегрузка оператора [] */
+	double operator[](size_t x);
+};
+
 class Matrix
 {
 private:
@@ -34,12 +46,13 @@ public:
 
 	/* Перегрузки операторов */
 	const Matrix& operator=(const Matrix& other);
-	Matrix& operator=(Matrix&& other);
+	Matrix& operator=(Matrix&& other) noexcept;
 	const Matrix& operator+=(const Matrix& other);
 	const Matrix& operator-=(const Matrix& other);
 	Matrix operator*=(const Matrix& other);
 	const Matrix& operator*=(double k);
-
+	Row operator[](size_t x);
+	double cell(size_t x, size_t y);
 	friend std::ostream& operator << (std::ostream& out, Matrix& matrix);
 };
 
