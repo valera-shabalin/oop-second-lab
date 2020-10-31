@@ -17,22 +17,16 @@ int main()
 
 	double* array = create_matrix(n, m);
 
-	/* Инициализация объектов */
-	Matrix f_matrix = Matrix();
-	Matrix s_matrix = Matrix(2);
 	Matrix e_matrix = Matrix(n, m, array);
-	Matrix g_matrix = Matrix(e_matrix);
+
+	/* Проверка перегрузок */
+	e_matrix *= e_matrix;
 
 	/* Проверка внешних функций */
-	Matrix summ = summ_matrix(e_matrix, g_matrix);
-	Matrix diff = diff_matrix(e_matrix, g_matrix);
-	Matrix scalar = scalar_multiply_matrix(e_matrix, 5);
+	Matrix m_matrix = std::move(multiply_matrix(e_matrix, e_matrix));
 
-	/* Проверка перегрузки операторов */
-	s_matrix += g_matrix;
-	e_matrix -= g_matrix;
-	s_matrix *= 5;
-	cout << s_matrix << e_matrix << g_matrix << diff << scalar;
+	/* Вывод результатов */
+	cout << e_matrix << m_matrix;
 
 	return 0;
 }

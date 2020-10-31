@@ -1,6 +1,4 @@
-*.sln
-*.vcxproj
-*.vcxproj.filters
-*.vcxproj.users
-Debug
-.vs
+*
+!*.sln
+!*.cpp
+!*.h

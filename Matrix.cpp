@@ -1,12 +1,13 @@
-#include <iostream>
+п»ї#include <iostream>
 
 #include "Matrix.h"
 
 using namespace std;
 
 size_t Matrix::static_id = 0;
+bool Matrix::debug = false;
 
-/* Конструктор */
+/* РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ */
 Matrix::Matrix(size_t n, size_t m, double* matrix) {
 	this->id = ++static_id;
 	this->n = n;
@@ -16,18 +17,18 @@ Matrix::Matrix(size_t n, size_t m, double* matrix) {
 		for (int i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) = *(matrix + i);
 	else
-		for (int i = 0; i < n * m; i++) 
+		for (int i = 0; i < n * m; i++)
 			*(this->matrix + i) = 0;
-	cout << "Конструктор " << this->id << endl;
+	if (debug) cout << "РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ " << this->id << endl;
 }
 
-/* Конструктор */
+/* РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РїР°СЂР°РјРµС‚СЂР°РјРё СЂР°Р·РјРµСЂР° РјР°С‚СЂРёС†С‹ */
 Matrix::Matrix(size_t n) : Matrix::Matrix(n, n) {}
 
-/* Конструкторы по-умолчанию */
+/* РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ-СѓРјРѕР»С‡Р°РЅРёСЋ */
 Matrix::Matrix() : Matrix::Matrix(0, 0) {}
 
-/* Копирующий конструктор */
+/* РљРѕРїРёСЂСѓСЋС‰РёР№ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ */
 Matrix::Matrix(const Matrix& other) {
 	this->id = ++static_id;
 	this->n = other.n;
@@ -35,156 +36,195 @@ Matrix::Matrix(const Matrix& other) {
 	this->matrix = new double[n * m];
 	for (int i = 0; i < this->get_size(); i++)
 		*(this->matrix + i) = *(other.matrix + i);
-	cout << "Конструктор копирования " << this->id << endl;
+	if (debug) cout << "РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ " << this->id << endl;
 }
 
-/* Деструктор */
+/* РџРµСЂРµРјРµС‰Р°СЋС‰РёР№ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ */
+Matrix::Matrix(Matrix&& other) : Matrix() {
+	std::swap(this->m, other.m);
+	std::swap(this->n, other.n);
+	std::swap(this->matrix, other.matrix);
+	if (debug) cout << "РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРµСЂРµРјРµС‰РµРЅРёСЏ " << other.id << endl;
+}
+
+/* Р”РµСЃС‚СЂСѓРєС‚РѕСЂ */
 Matrix::~Matrix() {
-	if (this->matrix) {
+	if (!this->is_empty()) {
 		delete this->matrix;
 		this->matrix = nullptr;
 	}
-	cout << "Деструктор " << this->id << endl;
+	if (debug) cout << "Р”РµСЃС‚СЂСѓРєС‚РѕСЂ " << this->id << endl;
 }
 
-/* Метод для проверки возможности умножения */
+/* РџСЂРѕРІРµСЂРєР° РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РїРµСЂРµРјРЅРѕР¶РµРЅРёСЏ РјР°С‚СЂРёС† */
 bool Matrix::allow_multiply(const Matrix& other) const {
 	return this->n == other.m;
 }
 
-/* Метод для проверки возможности сложения */
+/* РџСЂРѕРІРµСЂРєР° РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё СЃР»РѕР¶РµРЅРёСЏ РјР°С‚СЂРёС† */
 bool Matrix::allow_summ(const Matrix& other) const {
 	return this->n == other.n && this->m == other.m;
 }
 
-/* Метод для проверки матрицы на пустоту */
+/* РџСЂРѕРІРµСЂРєР° РјР°С‚СЂРёС†С‹ РЅР° РїСѓСЃС‚РѕС‚Сѓ */
 bool Matrix::is_empty() const {
 	return this->matrix == nullptr;
 }
 
-/* Метод для получения максимального элемента */
+/* РџРѕР»СѓС‡РёС‚СЊ РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЌР»РµРјРµРЅС‚ РјР°С‚СЂРёС†С‹ */
 double Matrix::get_max() const {
-	if (this->matrix == nullptr) throw "get_max - Матрица пустая";
+	if (this->is_empty()) throw "get_max - РјР°С‚СЂРёС†Р° РїСѓСЃС‚Р°СЏ";
 	double max = *this->matrix;
-	for (int i = 1; i < this->get_size(); i++)
+	for (size_t i = 1; i < this->get_size(); i++)
 		if (max < *(this->matrix + i))
 			max = *(this->matrix + i);
 	return max;
 }
 
-/* Метод для получения минимального элемента */
+/* РџРѕР»СѓС‡РёС‚СЊ РјРёРЅРёРјР°Р»СЊРЅС‹Р№ СЌР»РµРјРµРЅС‚ РјР°С‚СЂРёС†С‹ */
 double Matrix::get_min() const {
-	if (this->matrix == nullptr) throw "get_min - Матрица пустая";
+	if (this->is_empty()) throw "get_min - РјР°С‚СЂРёС†Р° РїСѓСЃС‚Р°СЏ";
 	double min = *this->matrix;
-	for (int i = 1; i < this->get_size(); i++)
+	for (size_t i = 1; i < this->get_size(); i++)
 		if (min > * (this->matrix + i))
 			min = *(this->matrix + i);
 	return min;
 }
 
-/* Геттеры */
+/* Р“РµС‚С‚РµСЂС‹ */
 int Matrix::get_m() const { return this->m; }
 int Matrix::get_n() const { return this->n; }
 int Matrix::get_size() const { return this->n * this->m; }
 int Matrix::get_id() const { return this->id; }
 double* Matrix::get_matrix() const { return this->matrix; }
 
-/* Перегрузка оператора = */
+/* РџРµСЂРµРіСЂСѓР·РєР° РѕРїРµСЂР°С‚РѕСЂР° РїРµСЂРµРјРµС‰РµРЅРёСЏ = */
 const Matrix& Matrix::operator=(const Matrix& other) {
 	if (this == &other) return *this;
 	this->n = other.n;
 	this->m = other.m;
 	if (this->matrix != nullptr) delete this->matrix;
 	this->matrix = new double[this->n * this->m];
-	for (int i = 0; i < this->get_size(); i++)
+	for (size_t i = 0; i < this->get_size(); i++)
 		*(this->matrix + i) = *(other.matrix + i);
 	return *this;
 }
 
-/* Перегрузка оператора += */
+/* РџРµСЂРµРјРµС‰Р°СЋС‰РёР№ РѕРїРµСЂР°С‚РѕСЂ = */
+Matrix& Matrix::operator=(Matrix&& other) {
+	std::swap(this->matrix, other.matrix);
+	std::swap(this->n, other.n);
+	std::swap(this->m, other.m);
+	cout << "РџРµСЂРµРјРµС‰Р°СЋС‰РёР№ РѕРїРµСЂР°С‚РѕСЂ = ";
+	return *this;
+}
+
+/* РџРµСЂРµРіСЂСѓР·РєР° РѕРїРµСЂР°С‚РѕСЂР° += */
 const Matrix& Matrix::operator+=(const Matrix& other) {
-	if (!this->allow_summ(other)) throw "operator+= - Попытка сложения матриц разных размеров";
-	if (other.matrix == nullptr) throw "operator+= - Матрица пустая";
-	for (int i = 0; i < this->get_size(); i++)
+	if (!this->allow_summ(other)) throw "operator+= - РјР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ";
+	if (other.is_empty()) throw "operator+= - РјР°С‚СЂРёС†Р° РїСѓСЃС‚Р°СЏ";
+	for (size_t i = 0; i < this->get_size(); i++)
 		*(this->matrix + i) += *(other.matrix + i);
 	return *this;
 }
 
-/* Перегрузка оператора -= */
+/* РџРµСЂРµРіСЂСѓР·РєР° РѕРїРµСЂР°С‚РѕСЂР° -= */
 const Matrix& Matrix::operator-=(const Matrix& other) {
-	if (!this->allow_summ(other)) throw "operator-= - Попытка вычитания матриц разных размеров";
-	if (other.is_empty()) throw "operator-= - Матрица пустая";
-	for (int i = 0; i < this->get_size(); i++)
+	if (!this->allow_summ(other)) throw "operator-= - РјР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ";
+	if (other.is_empty()) throw "operator-= - РјР°С‚СЂРёС†Р° РїСѓСЃС‚Р°СЏ";
+	for (size_t i = 0; i < this->get_size(); i++)
 		*(this->matrix + i) -= *(other.matrix + i);
 	return *this;
 }
 
-/* Перегрузка оператора *= */ // TODO
-/*const Matrix& Matrix::operator*=(const Matrix& other) {
-	if (!this->allow_multiply(other)) throw "operator-= - Попытка перемножения матриц разных размеров";
-	if (other.matrix == nullptr) throw "operator-= - Матрица пустая";
-	for (int i = 0; i < this->n; i++)
-		for (int j = 0; j < this->m; j++)
-			*(this->matrix + i * this->n + j) -= *(other.matrix + i * this->n + j);
+/* РџРµСЂРµРіСЂСѓР·РєР° РѕРїРµСЂР°С‚РѕСЂР° *= РЅР° РґСЂСѓРіСѓСЋ РјР°С‚СЂРёС†Сѓ */
+Matrix Matrix::operator*=(const Matrix& other) {
+	if (!this->allow_summ(other)) throw "operator*= - РјР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ";
+	if (other.is_empty()) throw "operator*= - РјР°С‚СЂРёС†Р° РїСѓСЃС‚Р°СЏ";
+	double* matrix = new double[this->n * other.m];
+	for (size_t i = 0; i < this->n * other.m; i++)
+		*(matrix + i) = 0;
+	for (size_t i = 0; i < this->n; i++)
+		for (size_t j = 0; j < other.m; j++)
+			for (size_t k = 0; k < this->m; k++)
+				*(matrix + i * other.m + j) += *(this->matrix + i * this->m + k) * *(other.matrix + k * other.m + j);
+	delete[] this->matrix;
+	this->matrix = matrix;
+	this->m = this->n;
+	this->n = other.m;
 	return *this;
-}*/
+}
 
-/* Перегрузка оператора *= для скаляра */
+/* РџРµСЂРµРіСЂСѓР·РєР° РѕРїРµСЂР°С‚РѕСЂР° *= РЅР° СЃРєР°Р»СЏСЂ */
 const Matrix& Matrix::operator*=(double k) {
-	for (int i = 0; i < this->get_size(); i++)
+	for (size_t i = 0; i < this->get_size(); i++)
 		*(this->matrix + i) *= k;
 	return *this;
 }
 
-/* Перегрузка оператора << */
+/* РџРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ РѕРїРµСЂР°С‚РѕСЂР° РІС‹РІРѕРґР° РЅР° РїРѕС‚РѕРє << */
 ostream& operator << (ostream& out, Matrix& matrix) {
-	if (matrix.is_empty()) throw "operator << - Попытка вывести пустую матрицу";
-	out << matrix.id << " матрица: " << endl;
-	for (int i = 0; i < matrix.n; i++) {
-		for (int j = 0; j < matrix.m; j++)
+	if (matrix.is_empty()) throw "operator << - РјР°С‚СЂРёС†Р° РїСѓСЃС‚Р°СЏ";
+	out << matrix.id << " РјР°С‚СЂРёС†Р°: " << endl;
+	for (size_t i = 0; i < matrix.n; i++) {
+		for (size_t j = 0; j < matrix.m; j++)
 			out << *(matrix.matrix + i * matrix.m + j) << " ";
 		out << endl;
 	}
 	return out;
 }
 
-/* Функция для создания матрицы */
+/* Р¤СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РјР°С‚СЂРёС†С‹ */
 double* create_matrix(size_t n, size_t m) {
 	double* matrix = new double[n * m], x = 0;
-	cout << "Заполните матрицу: ";
-	for (int i = 0; i < n * m; i++) {
+	cout << "Р—Р°РїРѕР»РЅРёС‚Рµ РјР°С‚СЂРёС†Сѓ: ";
+	for (size_t i = 0; i < n * m; i++) {
 		cin >> x;
 		*(matrix + i) = x;
 	}
 	return matrix;
 }
 
-/* Функция сложения двух матриц */
+/* РЎСѓРјРјР° РјР°С‚СЂРёС† */
 Matrix summ_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
-	if (!f_matrix.allow_summ(s_matrix)) throw "summ_matrix - Попытка сложения матриц разных размеров";
+	if (!f_matrix.allow_summ(s_matrix)) throw "summ_matrix - РјР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ";
 	size_t n = f_matrix.get_n(), m = f_matrix.get_m();
 	double* matrix = new double[n * m];
-	for (int i = 0; i < n * m; i++)
+	for (size_t i = 0; i < n * m; i++)
 		*(matrix + i) = *(f_matrix.get_matrix() + i) + *(s_matrix.get_matrix() + i);
 	return Matrix(n, m, matrix);
 }
 
-/* Функция вычитания двух матриц */
+/* Р Р°Р·РЅРѕСЃС‚СЊ РјР°С‚СЂРёС† */
 Matrix diff_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
-	if (!f_matrix.allow_summ(s_matrix)) throw "diff_matrix - Попытка вычитания матриц разных размеров";
+	if (!f_matrix.allow_summ(s_matrix)) throw "diff_matrix - РјР°С‚СЂРёС†С‹ СЂР°Р·РЅС‹С… СЂР°Р·РјРµСЂРѕРІ";
 	size_t n = f_matrix.get_n(), m = f_matrix.get_m();
 	double* matrix = new double[n * m];
-	for (int i = 0; i < n * m; i++)
+	for (size_t i = 0; i < n * m; i++)
 		*(matrix + i) = *(f_matrix.get_matrix() + i) - *(s_matrix.get_matrix() + i);
 	return Matrix(n, m, matrix);
 }
 
-/* Функция умножения матрицы на скаляр */
+/* РџРµСЂРµРјРЅРѕР¶РµРЅРёРµ РјР°С‚СЂРёС† */
+Matrix multiply_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
+	if (!f_matrix.allow_multiply(s_matrix)) throw "multiply_matrix - РЅРµ РїРµСЂРµРјРЅРѕР¶РёС‚СЊ РґР°РЅРЅС‹Рµ РјР°С‚СЂРёС†С‹";
+	size_t fn = f_matrix.get_n(), sm = s_matrix.get_m(), fm = f_matrix.get_m();
+	double* matrix = new double[fn * sm];
+	for (size_t i = 0; i < fn * sm; i++)
+		*(matrix + i) = 0;
+	for (size_t i = 0; i < fn; i++)
+		for (size_t j = 0; j < sm; j++)
+			for (size_t k = 0; k < fm; k++)
+				*(matrix + i * sm + j) += *(f_matrix.get_matrix() + i * fm + k) * *(s_matrix.get_matrix() + k * sm + j);
+	return Matrix(fn, sm, matrix);
+}
+
+/* РЈРјРЅРѕР¶РµРЅРёРµ РјР°С‚СЂРёС†С‹ РЅР° СЃРєР°Р»СЏСЂ */
 Matrix scalar_multiply_matrix(const Matrix& matrix, double k) {
-	if (matrix.is_empty()) throw "scalar_multiply_matrix - Пустая матрица";
+	if (matrix.is_empty()) throw "scalar_multiply_matrix - РјР°С‚СЂРёС†Р° РїСѓСЃС‚Р°СЏ";
 	size_t n = matrix.get_n(), m = matrix.get_m();
 	double* new_matrix = new double[n * m];
-	for (int i = 0; i < n * m; i++)
+	for (size_t i = 0; i < n * m; i++)
 		*(new_matrix + i) = *(matrix.get_matrix() + i) * k;
 	return Matrix(n, m, new_matrix);
 }
