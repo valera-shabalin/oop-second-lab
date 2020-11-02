@@ -36,7 +36,7 @@ namespace mat {
 		this->n = other.n;
 		this->m = other.m;
 		this->matrix = new double[n * m];
-		copy(other.matrix, other.matrix + other.n * other.m, this->matrix);
+		if (other.get_size() > 0) copy(other.matrix, other.matrix + other.n * other.m, this->matrix);
 		if (debug) cout << "Конструктор копирования " << this->id << endl;
 	}
 
@@ -102,20 +102,14 @@ namespace mat {
 	/* Перегрузка оператора перемещения = */
 	const Matrix& Matrix::operator=(const Matrix& other) {
 		if (this == &other) return *this;
-		if (this->n == other.n && this->m == other.m) {
-			copy(other.matrix, other.matrix + other.m * other.n, this->matrix);
-			return *this;
+		size_t size = other.get_size();
+		if (this->get_size() != other.get_size()) {
+			if (this->matrix != nullptr) delete[] this->matrix;
+			this->matrix = size > 0 ? new double[size] : nullptr;
 		}
-		if (this->n == other.m && this->m == other.n) {
-			this->n = other.m;
-			this->m = other.n;
-			copy(other.matrix, other.matrix + other.m * other.n, this->matrix);
-			return *this;
-		}
-		this->n = other.n;
 		this->m = other.m;
-		if (this->matrix != nullptr) delete this->matrix;
-		this->matrix = new double[this->n * this->m];
+		this->n = other.n;
+		if (size > 0) copy(other.matrix, other.matrix + size, this->matrix);
 		return *this;
 	}
 
