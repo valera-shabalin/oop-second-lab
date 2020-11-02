@@ -7,26 +7,27 @@ using namespace std;
 size_t Matrix::static_id = 0;
 bool Matrix::debug = false;
 
+/* Конструктор для строки */
+Matrix::Row::Row(Matrix& owner, size_t i) {
+	this->owner = &owner;
+	this->index = i;
+}
+
 /* Конструктор */
 Matrix::Matrix(size_t n, size_t m, double* matrix) {
 	this->id = ++static_id;
 	this->n = n;
 	this->m = m;
-	this->matrix = new double[n * m];
+	if (n != 0 && m != 0)
+		this->matrix = new double[n * m]();
 	if (matrix != nullptr)
 		for (size_t i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) = *(matrix + i);
-	else
-		for (size_t i = 0; i < n * m; i++)
-			*(this->matrix + i) = 0;
 	if (debug) cout << "Конструктор " << this->id << endl;
 }
 
 /* Конструктор с параметрами размера матрицы */
 Matrix::Matrix(size_t n) : Matrix::Matrix(n, n) {}
-
-/* Конструктор по-умолчанию */
-Matrix::Matrix() : Matrix::Matrix(0, 0) {}
 
 /* Копирующий конструктор */
 Matrix::Matrix(const Matrix& other) {
@@ -34,7 +35,7 @@ Matrix::Matrix(const Matrix& other) {
 	this->n = other.n;
 	this->m = other.m;
 	this->matrix = new double[n * m];
-	for (int i = 0; i < this->get_size(); i++)
+	for (size_t i = 0; i < this->get_size(); i++)
 		*(this->matrix + i) = *(other.matrix + i);
 	if (debug) cout << "Конструктор копирования " << this->id << endl;
 }
@@ -92,10 +93,10 @@ double Matrix::get_min() const {
 }
 
 /* Геттеры */
-int Matrix::get_m() const { return this->m; }
-int Matrix::get_n() const { return this->n; }
-int Matrix::get_size() const { return this->n * this->m; }
-int Matrix::get_id() const { return this->id; }
+size_t Matrix::get_m() const { return this->m; }
+size_t Matrix::get_n() const { return this->n; }
+size_t Matrix::get_size() const { return this->n * this->m; }
+size_t Matrix::get_id() const { return this->id; }
 double* Matrix::get_matrix() const { return this->matrix; }
 
 /* Перегрузка оператора перемещения = */
@@ -175,11 +176,11 @@ ostream& operator << (ostream& out, Matrix& matrix) {
 }
 
 /* Перегрузка оператора [] */
-Row Matrix::operator[](size_t x) {
-	return Row(*this, x); 
+Matrix::Row Matrix::operator[](size_t x) {
+	return Matrix::Row(*this, x);
 }
 
-double Row::operator[](size_t x) { 
+double Matrix::Row::operator[](size_t x) {
 	return owner->cell(this->index, x); 
 }
 
@@ -243,10 +244,5 @@ Matrix scalar_multiply_matrix(const Matrix& matrix, double k) {
 	return Matrix(n, m, new_matrix);
 }
 
-/* Конструктор для строки */
-Row::Row(Matrix& owner, size_t i) {
-	this->owner = &owner;
-	this->index = i;
-}
 
 

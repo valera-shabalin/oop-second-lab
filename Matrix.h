@@ -1,31 +1,29 @@
 ﻿#ifndef MATRIX_H
 #define MATRIX_H
 
-class Row {
-	friend class Row;
-private:
-	size_t index;
-	class Matrix* owner;
-public:
-	/* Конструктор */
-	Row(Matrix& owner, size_t i);
-	/* Перегрузка оператора [] */
-	double operator[](size_t x);
-};
-
 class Matrix
 {
 private:
 	static size_t static_id;
 	static bool debug;
 
-	double* matrix = nullptr;
+	double* matrix;
 	size_t n = 0, m = 0, id = 0;
+
+	class Row {
+	private:
+		size_t index;
+		class Matrix* owner;
+	public:
+		/* Конструктор */
+		Row(Matrix& owner, size_t i);
+		/* Перегрузка оператора [] */
+		double operator[](size_t x);
+	};
 public:
 	/* Конструкторы и деструктор */
-	Matrix(size_t n, size_t m, double* matrix = nullptr);
+	Matrix(size_t n = 0, size_t m = 0, double* matrix = nullptr);
 	Matrix(size_t n);
-	Matrix();
 	Matrix(const Matrix& other);
 	Matrix(Matrix&& other);
 	~Matrix();
@@ -38,10 +36,10 @@ public:
 	/* Геттеры */
 	double get_max() const;
 	double get_min() const;
-	int get_m() const;
-	int get_n() const;
-	int get_size() const;
-	int get_id() const;
+	size_t get_m() const;
+	size_t get_n() const;
+	size_t get_size() const;
+	size_t get_id() const;
 	double* get_matrix() const;
 
 	/* Перегрузки операторов */
