@@ -102,11 +102,20 @@ namespace mat {
 	/* Перегрузка оператора перемещения = */
 	const Matrix& Matrix::operator=(const Matrix& other) {
 		if (this == &other) return *this;
+		if (this->n == other.n && this->m == other.m) {
+			copy(other.matrix, other.matrix + other.m * other.n, this->matrix);
+			return *this;
+		}
+		if (this->n == other.m && this->m == other.n) {
+			this->n = other.m;
+			this->m = other.n;
+			copy(other.matrix, other.matrix + other.m * other.n, this->matrix);
+			return *this;
+		}
 		this->n = other.n;
 		this->m = other.m;
 		if (this->matrix != nullptr) delete this->matrix;
 		this->matrix = new double[this->n * this->m];
-		copy(other.matrix, other.matrix + other.m * other.n, this->matrix);
 		return *this;
 	}
 
