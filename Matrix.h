@@ -24,10 +24,20 @@ namespace mat {
 	public:
 		/* Конструкторы и деструктор */
 		Matrix(size_t n = 0, size_t m = 0, double* matrix = nullptr);
-		Matrix(size_t n);
-		Matrix(const Matrix& other);
-		Matrix(Matrix&& other);
+		explicit Matrix(size_t n);
+		
 		~Matrix();
+
+		/* Копирования */
+		Matrix(const Matrix& other);
+		const Matrix& operator=(const Matrix& other);
+
+		/* Перемещения */
+		Matrix(Matrix&& other);
+		Matrix& operator=(Matrix&& other) noexcept;
+
+		/* Сделать матрицу пустой */
+		Matrix& make_null();
 
 		/* Функции проверки */
 		bool allow_multiply(const Matrix& other) const;
@@ -44,8 +54,6 @@ namespace mat {
 		double* get_matrix() const;
 
 		/* Перегрузки операторов */
-		const Matrix& operator=(const Matrix& other);
-		Matrix& operator=(Matrix&& other) noexcept;
 		const Matrix& operator+=(const Matrix& other);
 		const Matrix& operator-=(const Matrix& other);
 		Matrix operator*=(const Matrix& other);

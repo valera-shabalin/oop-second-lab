@@ -30,24 +30,6 @@ namespace mat {
 	/* Конструктор с параметрами размера матрицы */
 	Matrix::Matrix(size_t n) : Matrix::Matrix(n, n) {}
 
-	/* Копирующий конструктор */
-	Matrix::Matrix(const Matrix& other) {
-		this->id = ++static_id;
-		this->n = other.n;
-		this->m = other.m;
-		this->matrix = new double[n * m];
-		if (other.get_size() > 0) copy(other.matrix, other.matrix + other.n * other.m, this->matrix);
-		if (debug) cout << "Конструктор копирования " << this->id << endl;
-	}
-
-	/* Перемещающий конструктор */
-	Matrix::Matrix(Matrix&& other) : Matrix() {
-		std::swap(this->m, other.m);
-		std::swap(this->n, other.n);
-		std::swap(this->matrix, other.matrix);
-		if (debug) cout << "Конструктор перемещения " << other.id << endl;
-	}
-
 	/* Деструктор */
 	Matrix::~Matrix() {
 		if (!this->is_empty()) {
@@ -55,6 +37,52 @@ namespace mat {
 			this->matrix = nullptr;
 		}
 		if (debug) cout << "Деструктор " << this->id << endl;
+	}
+
+	/* Копирующий конструктор */
+	Matrix::Matrix(const Matrix& other) {
+		*this = other;
+		if (debug) cout << "Конструктор копирования " << this->id << endl;
+	}
+
+	/* Копирующий оператор = */
+	const Matrix& Matrix::operator=(const Matrix& other) {
+		if (this == &other) return *this;
+		size_t size = other.get_size();
+		if (this->get_size() != size) {
+			if (this->matrix != nullptr) delete[] this->matrix;
+			this->matrix = size > 0 ? new double[size] : nullptr;
+		}
+		this->m = other.m;
+		this->n = other.n;
+		if (size > 0) copy(other.matrix, other.matrix + size, this->matrix);
+		return *this;
+	}
+
+	/* Перемещающий конструктор */
+	Matrix::Matrix(Matrix&& other) : Matrix() {
+		*this = move(other);
+		if (debug) cout << "Конструктор перемещения " << other.id << endl;
+	}
+
+	/* Перемещающий оператор = */
+	Matrix& Matrix::operator=(Matrix&& other) noexcept {
+		if (this == &other) return *this;
+		this->make_null();
+		std::swap(this->matrix, other.matrix);
+		std::swap(this->n, other.n);
+		std::swap(this->m, other.m);
+		return *this;
+	}
+
+	/* Сделать матрицу пустой */
+	Matrix& Matrix::make_null() {
+		this->m = this->n = 0;
+		if (!this->is_empty()) {
+			delete[] this->matrix;
+			this->matrix = nullptr;
+		}
+		return *this;
 	}
 
 	/* Проверка возможности перемножения матриц */
@@ -98,29 +126,6 @@ namespace mat {
 	size_t Matrix::get_size() const { return this->n * this->m; }
 	size_t Matrix::get_id() const { return this->id; }
 	double* Matrix::get_matrix() const { return this->matrix; }
-
-	/* Перегрузка оператора перемещения = */
-	const Matrix& Matrix::operator=(const Matrix& other) {
-		if (this == &other) return *this;
-		size_t size = other.get_size();
-		if (this->get_size() != other.get_size()) {
-			if (this->matrix != nullptr) delete[] this->matrix;
-			this->matrix = size > 0 ? new double[size] : nullptr;
-		}
-		this->m = other.m;
-		this->n = other.n;
-		if (size > 0) copy(other.matrix, other.matrix + size, this->matrix);
-		return *this;
-	}
-
-	/* Перемещающий оператор = */
-	Matrix& Matrix::operator=(Matrix&& other) noexcept {
-		std::swap(this->matrix, other.matrix);
-		std::swap(this->n, other.n);
-		std::swap(this->m, other.m);
-		cout << "Перемещающий оператор = ";
-		return *this;
-	}
 
 	/* Перегрузка оператора += */
 	const Matrix& Matrix::operator+=(const Matrix& other) {
