@@ -14,12 +14,13 @@ namespace mat {
 		class Row {
 		private:
 			size_t index;
-			class Matrix* owner;
+			const Matrix* owner;
 		public:
 			/* Конструктор */
-			Row(Matrix& owner, size_t i);
+			Row(const Matrix* owner, size_t i);
 			/* Перегрузка оператора [] */
-			double operator[](size_t x);
+			double operator[](size_t x) const;
+			double& operator[](size_t x);
 		};
 	public:
 		/* Конструкторы и деструктор */
@@ -66,7 +67,7 @@ namespace mat {
 
 		/* Перегрузка оператора [][] */
 		Matrix::Row operator[](size_t x);
-		double cell(size_t x, size_t y);
+		const Matrix::Row operator[](size_t x) const;
 
 		/* Перегрузка внешних операторов */
 		friend std::ostream& operator << (std::ostream& out, Matrix& matrix);

@@ -9,8 +9,8 @@ namespace mat {
 	bool Matrix::debug = false;
 
 	/* Конструктор для строки */
-	Matrix::Row::Row(Matrix& owner, size_t i) {
-		this->owner = &owner;
+	Matrix::Row::Row(const Matrix* owner, size_t i) {
+		this->owner = owner;
 		this->index = i;
 	}
 
@@ -270,16 +270,19 @@ namespace mat {
 
 	/* Перегрузка оператора [] */
 	Matrix::Row Matrix::operator[](size_t x) {
-		return Matrix::Row(*this, x);
+		return Row(this, x);
 	}
 
-	double Matrix::Row::operator[](size_t x) {
-		return owner->cell(this->index, x);
+	const Matrix::Row Matrix::operator[](size_t x) const {
+		return Row(this, x);
 	}
 
-	/* Получить ячеейку матрицы */
-	double Matrix::cell(size_t x, size_t y) {
-		return *(this->matrix + x * this->n + y);
+	double Matrix::Row::operator[](size_t x) const {
+		return *(this->owner->matrix + this->index * this->owner->n + x);
+	}
+
+	double& Matrix::Row::operator[](size_t x) {
+		return *(this->owner->matrix + this->index * this->owner->n + x);
 	}
 
 	/* Функция для создания матрицы */
