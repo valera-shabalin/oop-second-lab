@@ -25,16 +25,16 @@ int main()
 	e_matrix += e_matrix;
 
 	/* Проверка внешних функций */
-	Matrix summ = std::move(summ_matrix(e_matrix, e_matrix));
-	Matrix diff = std::move(diff_matrix(e_matrix, e_matrix));
-	Matrix multiply = std::move(multiply_matrix(e_matrix, e_matrix));
-	Matrix scalar_multiply = std::move(scalar_multiply_matrix(e_matrix, 5));
+	Matrix summ = e_matrix + e_matrix;
+	Matrix diff = e_matrix - e_matrix;
+	Matrix multiply = e_matrix * e_matrix;
+	Matrix scalar_multiply = e_matrix * 5;
 
 	/* Вывод результатов */
 	cout << e_matrix << summ << diff << multiply << scalar_multiply;
 
 	/* Перегрузка оператора [][] */
-	cout << multiply[2][2];
+	cout << e_matrix[1][1];
 
 	return 0;
 }

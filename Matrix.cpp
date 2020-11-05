@@ -19,11 +19,14 @@ namespace mat {
 		this->id = ++static_id;
 		this->n = n;
 		this->m = m;
+
 		if (n != 0 && m != 0)
 			this->matrix = new double[n * m]();
+
 		if (matrix != nullptr)
 			copy(matrix, matrix + m * n, this->matrix);
-		if (debug) 
+
+		if (debug)
 			cout << "Конструктор " << this->id << endl;
 	}
 
@@ -48,6 +51,7 @@ namespace mat {
 	/* Копирующий оператор = */
 	const Matrix& Matrix::operator=(const Matrix& other) {
 		if (this == &other) return *this;
+
 		size_t size = other.get_size();
 		if (this->get_size() != size) {
 			if (this->matrix != nullptr) delete[] this->matrix;
@@ -56,6 +60,7 @@ namespace mat {
 		this->m = other.m;
 		this->n = other.n;
 		if (size > 0) copy(other.matrix, other.matrix + size, this->matrix);
+
 		return *this;
 	}
 
@@ -68,20 +73,24 @@ namespace mat {
 	/* Перемещающий оператор = */
 	Matrix& Matrix::operator=(Matrix&& other) noexcept {
 		if (this == &other) return *this;
+
 		this->make_null();
 		std::swap(this->matrix, other.matrix);
 		std::swap(this->n, other.n);
 		std::swap(this->m, other.m);
+
 		return *this;
 	}
 
 	/* Сделать матрицу пустой */
 	Matrix& Matrix::make_null() {
 		this->m = this->n = 0;
+
 		if (!this->is_empty()) {
 			delete[] this->matrix;
 			this->matrix = nullptr;
 		}
+
 		return *this;
 	}
 
@@ -102,21 +111,28 @@ namespace mat {
 
 	/* Получить максимальный элемент матрицы */
 	double Matrix::get_max() const {
-		if (this->is_empty()) throw "get_max - матрица пустая";
+		if (this->is_empty())
+			throw "get_max - матрица пустая";
+
 		double max = *this->matrix;
+
 		for (size_t i = 1; i < this->get_size(); i++)
 			if (max < *(this->matrix + i))
 				max = *(this->matrix + i);
+
 		return max;
 	}
 
 	/* Получить минимальный элемент матрицы */
 	double Matrix::get_min() const {
-		if (this->is_empty()) throw "get_min - матрица пустая";
+		if (this->is_empty()) 
+			throw "get_min - матрица пустая";
+
 		double min = *this->matrix;
 		for (size_t i = 1; i < this->get_size(); i++)
 			if (min > * (this->matrix + i))
 				min = *(this->matrix + i);
+
 		return min;
 	}
 
@@ -128,44 +144,119 @@ namespace mat {
 	double* Matrix::get_matrix() const { return this->matrix; }
 
 	/* Перегрузка оператора += */
-	const Matrix& Matrix::operator+=(const Matrix& other) {
-		if (!this->allow_summ(other)) throw "operator+= - матрицы разных размеров";
-		if (other.is_empty()) throw "operator+= - матрица пустая";
-		copy(other.matrix, other.matrix + other.m * other.n, this->matrix);
+	Matrix& Matrix::operator+=(const Matrix& other) {
+		if (!this->allow_summ(other)) 
+			throw "operator+= - матрицы разных размеров";
+
+		if (other.is_empty()) 
+			throw "operator+= - матрица пустая";
+
+		for (size_t i = 0; i < this->get_size(); i++)
+			*(this->matrix + i) += *(other.matrix + i);
+
 		return *this;
 	}
+
+	/* Перегрузка оператора + */
+	Matrix Matrix::operator+(const Matrix& other) {
+		if (!this->allow_summ(other)) 
+			throw "operator+ - матрицы разных размеров";
+
+		if (other.is_empty()) 
+			throw "operator+ - матрица пустая";
+
+		Matrix tmp(*this);
+		tmp += other;
+
+		return move(tmp);
+	}
+
 
 	/* Перегрузка оператора -= */
-	const Matrix& Matrix::operator-=(const Matrix& other) {
-		if (!this->allow_summ(other)) throw "operator-= - матрицы разных размеров";
-		if (other.is_empty()) throw "operator-= - матрица пустая";
-		copy(other.matrix, other.matrix + other.m * other.n, this->matrix);
+	Matrix& Matrix::operator-=(const Matrix& other) {
+		if (!this->allow_summ(other))
+			throw "operator+= - матрицы разных размеров";
+
+		if (other.is_empty())
+			throw "operator+= - матрица пустая";
+
+		for (size_t i = 0; i < this->get_size(); i++)
+			*(this->matrix + i) -= *(other.matrix + i);
+
 		return *this;
 	}
 
+	/* Перегрузка оператора - */
+	Matrix Matrix::operator-(const Matrix& other) {
+		if (!this->allow_summ(other))
+			throw "operator- - матрицы разных размеров";
+
+		if (other.is_empty())
+			throw "operator- - матрица пустая";
+
+		Matrix tmp(*this);
+		tmp -= other;
+
+		return move(tmp);
+	}
+	
+
 	/* Перегрузка оператора *= на другую матрицу */
-	Matrix Matrix::operator*=(const Matrix& other) {
-		if (!this->allow_summ(other)) throw "operator*= - матрицы разных размеров";
-		if (other.is_empty()) throw "operator*= - матрица пустая";
-		double* matrix = new double[this->n * other.m];
-		for (size_t i = 0; i < this->n * other.m; i++)
+	Matrix& Matrix::operator*=(const Matrix& other) {
+		if (!this->allow_summ(other)) 
+			throw "operator*= - матрицы разных размеров";
+
+		if (other.is_empty()) 
+			throw "operator*= - матрица пустая";
+
+		size_t new_size = this->n * other.m;
+		double* matrix = new double[new_size];
+
+		for (size_t i = 0; i < new_size; i++)
 			*(matrix + i) = 0;
 		for (size_t i = 0; i < this->n; i++)
 			for (size_t j = 0; j < other.m; j++)
 				for (size_t k = 0; k < this->m; k++)
 					*(matrix + i * other.m + j) += *(this->matrix + i * this->m + k) * *(other.matrix + k * other.m + j);
+
 		delete[] this->matrix;
 		this->matrix = matrix;
 		this->m = this->n;
 		this->n = other.m;
+
 		return *this;
 	}
 
+	/* Перегрузка оператора * */
+	Matrix Matrix::operator*(const Matrix& other) {
+		if (!this->allow_multiply(other))
+			throw "operator* - матрицы разных размеров";
+
+		if (other.is_empty())
+			throw "operator* - матрица пустая";
+
+		Matrix tmp(*this);
+		tmp *= other;
+
+		return move(tmp);
+	}
+
 	/* Перегрузка оператора *= на скаляр */
-	const Matrix& Matrix::operator*=(double k) {
+	Matrix& Matrix::operator*=(double k) {
 		for (size_t i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) *= k;
 		return *this;
+	}
+
+	/* Перегрузка оператора * на скаляр */
+	Matrix Matrix::operator*(double k) {
+		if (this->is_empty())
+			throw "operator* - матрица пустая";
+
+		Matrix tmp(*this);
+		tmp *= k;
+
+		return move(tmp);
 	}
 
 	/* Переопределение оператора вывода на поток << */
@@ -204,51 +295,8 @@ namespace mat {
 		}
 		return matrix;
 	}
-
-	/* Сумма матриц */
-	Matrix summ_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
-		if (!f_matrix.allow_summ(s_matrix)) throw "summ_matrix - матрицы разных размеров";
-		size_t n = f_matrix.get_n(), m = f_matrix.get_m();
-		double* matrix = new double[n * m];
-		for (size_t i = 0; i < n * m; i++)
-			*(matrix + i) = *(f_matrix.get_matrix() + i) + *(s_matrix.get_matrix() + i);
-		return Matrix(n, m, matrix);
-	}
-
-	/* Разность матриц */
-	Matrix diff_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
-		if (!f_matrix.allow_summ(s_matrix)) throw "diff_matrix - матрицы разных размеров";
-		size_t n = f_matrix.get_n(), m = f_matrix.get_m();
-		double* matrix = new double[n * m];
-		for (size_t i = 0; i < n * m; i++)
-			*(matrix + i) = *(f_matrix.get_matrix() + i) - *(s_matrix.get_matrix() + i);
-		return Matrix(n, m, matrix);
-	}
-
-	/* Перемножение матриц */
-	Matrix multiply_matrix(const Matrix& f_matrix, const Matrix& s_matrix) {
-		if (!f_matrix.allow_multiply(s_matrix)) throw "multiply_matrix - не перемножить данные матрицы";
-		size_t fn = f_matrix.get_n(), sm = s_matrix.get_m(), fm = f_matrix.get_m();
-		double* matrix = new double[fn * sm];
-		for (size_t i = 0; i < fn * sm; i++)
-			*(matrix + i) = 0;
-		for (size_t i = 0; i < fn; i++)
-			for (size_t j = 0; j < sm; j++)
-				for (size_t k = 0; k < fm; k++)
-					*(matrix + i * sm + j) += *(f_matrix.get_matrix() + i * fm + k) * *(s_matrix.get_matrix() + k * sm + j);
-		return Matrix(fn, sm, matrix);
-	}
-
-	/* Умножение матрицы на скаляр */
-	Matrix scalar_multiply_matrix(const Matrix& matrix, double k) {
-		if (matrix.is_empty()) throw "scalar_multiply_matrix - матрица пустая";
-		size_t n = matrix.get_n(), m = matrix.get_m();
-		double* new_matrix = new double[n * m];
-		for (size_t i = 0; i < n * m; i++)
-			*(new_matrix + i) = *(matrix.get_matrix() + i) * k;
-		return Matrix(n, m, new_matrix);
-	}
 }
+
 
 
 

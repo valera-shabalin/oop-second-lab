@@ -54,22 +54,25 @@ namespace mat {
 		double* get_matrix() const;
 
 		/* Перегрузки операторов */
-		const Matrix& operator+=(const Matrix& other);
-		const Matrix& operator-=(const Matrix& other);
-		Matrix operator*=(const Matrix& other);
-		const Matrix& operator*=(double k);
+		Matrix& operator+=(const Matrix& other);
+		Matrix& operator-=(const Matrix& other);
+		Matrix& operator*=(const Matrix& other);
+		Matrix& operator*=(double k);
 		Row operator[](size_t x);
 		double cell(size_t x, size_t y);
 		friend std::ostream& operator << (std::ostream& out, Matrix& matrix);
+
+		/* Перегрузки операторов для внешних операций */
+		Matrix operator+(const Matrix& other);
+		Matrix operator-(const Matrix& other);
+		Matrix operator*(const Matrix& other);
+		Matrix operator*(double k);
 	};
 
 	/* Внешние функции */
 	double* create_matrix(size_t n, size_t m);
-	Matrix summ_matrix(const Matrix& f_matrix, const Matrix& s_matrix);
-	Matrix diff_matrix(const Matrix& f_matrix, const Matrix& s_matrix);
-	Matrix multiply_matrix(const Matrix& f_matrix, const Matrix& s_matrix);
-	Matrix scalar_multiply_matrix(const Matrix& matrix, double k);
 }
+
 
 #endif
 
