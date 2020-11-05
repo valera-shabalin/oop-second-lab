@@ -6,8 +6,7 @@
 using namespace std;
 using namespace mat;
 
-int main()
-{
+int main() {
 	setlocale(LC_CTYPE, "Rus");
 
 	/* Инициализация переменных */
@@ -46,7 +45,9 @@ int main()
 	cout << t_matrix;
 
 	/* Перегрузка оператора [][] */
-	cout << "Проверка перегрузки [][]. Получим элемент e_matrix[1][1]: " << e_matrix[1][1];
+	cout << "Проверка перегрузки [][]. Получим элемент e_matrix[1][1]: " << e_matrix[1][1] << endl;
+	//e_matrix[1][1] = 100;
+	cout << "Проверка перегрузки [][]. Получим элемент e_matrix[1][1]: " << e_matrix[1][1] << endl;
 
 	return 0;
 }

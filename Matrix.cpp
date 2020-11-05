@@ -17,11 +17,12 @@ namespace mat {
 	/* Конструктор */
 	Matrix::Matrix(size_t n, size_t m, double* matrix) {
 		this->id = ++static_id;
-		this->n = n;
-		this->m = m;
-
-		if (n != 0 && m != 0)
+		
+		if (n != 0 && m != 0) {
 			this->matrix = new double[n * m]();
+			this->n = n;
+			this->m = m;
+		}
 
 		if (matrix != nullptr)
 			copy(matrix, matrix + m * n, this->matrix);
@@ -141,7 +142,6 @@ namespace mat {
 	size_t Matrix::get_n() const { return this->n; }
 	size_t Matrix::get_size() const { return this->n * this->m; }
 	size_t Matrix::get_id() const { return this->id; }
-	double* Matrix::get_matrix() const { return this->matrix; }
 
 	/* Перегрузка оператора += */
 	Matrix& Matrix::operator+=(const Matrix& other) {
@@ -171,7 +171,6 @@ namespace mat {
 		return move(tmp);
 	}
 
-
 	/* Перегрузка оператора -= */
 	Matrix& Matrix::operator-=(const Matrix& other) {
 		if (!this->allow_summ(other))
@@ -200,7 +199,6 @@ namespace mat {
 		return move(tmp);
 	}
 	
-
 	/* Перегрузка оператора *= на другую матрицу */
 	Matrix& Matrix::operator*=(const Matrix& other) {
 		if (!this->allow_summ(other)) 
@@ -262,9 +260,9 @@ namespace mat {
 	/* Переопределение оператора вывода на поток << */
 	ostream& operator << (ostream& out, Matrix& matrix) {
 		if (matrix.is_empty()) throw "operator << - матрица пустая";
-		for (size_t i = 0; i < matrix.get_n(); i++) {
-			for (size_t j = 0; j < matrix.get_m(); j++)
-				out << *(matrix.get_matrix() + i * matrix.get_m() + j) << " ";
+		for (size_t i = 0; i < matrix.n; i++) {
+			for (size_t j = 0; j < matrix.m; j++)
+				out << *(matrix.matrix + i * matrix.m + j) << " ";
 			out << endl;
 		}
 		return out;

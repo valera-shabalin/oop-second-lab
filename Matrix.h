@@ -8,7 +8,7 @@ namespace mat {
 		static size_t static_id;
 		static bool debug;
 
-		double* matrix;
+		double* matrix = nullptr;
 		size_t n = 0, m = 0, id = 0;
 
 		class Row {
@@ -51,22 +51,25 @@ namespace mat {
 		size_t get_n() const;
 		size_t get_size() const;
 		size_t get_id() const;
-		double* get_matrix() const;
 
 		/* Перегрузки операторов */
 		Matrix& operator+=(const Matrix& other);
 		Matrix& operator-=(const Matrix& other);
 		Matrix& operator*=(const Matrix& other);
 		Matrix& operator*=(double k);
-		Row operator[](size_t x);
-		double cell(size_t x, size_t y);
-		friend std::ostream& operator << (std::ostream& out, Matrix& matrix);
-
+		
 		/* Перегрузки операторов для внешних операций */
 		Matrix operator+(const Matrix& other);
 		Matrix operator-(const Matrix& other);
 		Matrix operator*(const Matrix& other);
 		Matrix operator*(double k);
+
+		/* Перегрузка оператора [][] */
+		Matrix::Row operator[](size_t x);
+		double cell(size_t x, size_t y);
+
+		/* Перегрузка внешних операторов */
+		friend std::ostream& operator << (std::ostream& out, Matrix& matrix);
 	};
 
 	/* Внешние функции */
