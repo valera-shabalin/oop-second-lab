@@ -175,10 +175,10 @@ namespace mat {
 	/* Перегрузка оператора -= */
 	Matrix& Matrix::operator-=(const Matrix& other) {
 		if (!this->allow_summ(other))
-			throw "operator+= - матрицы разных размеров";
+			throw "operator-= - матрицы разных размеров";
 
 		if (other.is_empty())
-			throw "operator+= - матрица пустая";
+			throw "operator-= - матрица пустая";
 
 		for (size_t i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) -= *(other.matrix + i);
@@ -262,7 +262,6 @@ namespace mat {
 	/* Переопределение оператора вывода на поток << */
 	ostream& operator << (ostream& out, Matrix& matrix) {
 		if (matrix.is_empty()) throw "operator << - матрица пустая";
-		out << matrix.get_id() << " матрица: " << endl;
 		for (size_t i = 0; i < matrix.get_n(); i++) {
 			for (size_t j = 0; j < matrix.get_m(); j++)
 				out << *(matrix.get_matrix() + i * matrix.get_m() + j) << " ";
