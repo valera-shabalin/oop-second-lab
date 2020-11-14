@@ -145,12 +145,6 @@ namespace mat {
 
 	/* Перегрузка оператора += */
 	Matrix& Matrix::operator+=(const Matrix& other) {
-		if (!this->allow_summ(other)) 
-			throw "operator+= - матрицы разных размеров";
-
-		if (other.is_empty()) 
-			throw "operator+= - матрица пустая";
-
 		for (size_t i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) += *(other.matrix + i);
 
@@ -187,12 +181,6 @@ namespace mat {
 
 	/* Перегрузка оператора - */
 	Matrix Matrix::operator-(const Matrix& other) {
-		if (!this->allow_summ(other))
-			throw "operator- - матрицы разных размеров";
-
-		if (other.is_empty())
-			throw "operator- - матрица пустая";
-
 		Matrix tmp(*this);
 		tmp -= other;
 
@@ -201,7 +189,7 @@ namespace mat {
 	
 	/* Перегрузка оператора *= на другую матрицу */
 	Matrix& Matrix::operator*=(const Matrix& other) {
-		if (!this->allow_summ(other)) 
+		if (!this->allow_multiply(other)) 
 			throw "operator*= - матрицы разных размеров";
 
 		if (other.is_empty()) 
@@ -227,12 +215,6 @@ namespace mat {
 
 	/* Перегрузка оператора * */
 	Matrix Matrix::operator*(const Matrix& other) {
-		if (!this->allow_multiply(other))
-			throw "operator* - матрицы разных размеров";
-
-		if (other.is_empty())
-			throw "operator* - матрица пустая";
-
 		Matrix tmp(*this);
 		tmp *= other;
 
@@ -241,6 +223,9 @@ namespace mat {
 
 	/* Перегрузка оператора *= на скаляр */
 	Matrix& Matrix::operator*=(double k) {
+		if (this->is_empty())
+			throw "operator* - матрица пустая";
+
 		for (size_t i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) *= k;
 		return *this;
@@ -248,9 +233,6 @@ namespace mat {
 
 	/* Перегрузка оператора * на скаляр */
 	Matrix Matrix::operator*(double k) {
-		if (this->is_empty())
-			throw "operator* - матрица пустая";
-
 		Matrix tmp(*this);
 		tmp *= k;
 

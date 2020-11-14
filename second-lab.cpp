@@ -22,6 +22,7 @@ int main() {
 
 	Matrix e_matrix = Matrix(n, m, f_array);
 	Matrix t_matrix = Matrix(x, y, s_array);
+	Matrix m_matrix = Matrix(9);
 
 	/* Проверка перегрузок */
 	cout << "Проверка перегрузок *=, +=, -=: " << endl 
