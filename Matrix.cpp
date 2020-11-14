@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <iomanip> 
 
 #include "Matrix.h"
 
@@ -240,30 +241,42 @@ namespace mat {
 	}
 
 	/* Переопределение оператора вывода на поток << */
-	ostream& operator << (ostream& out, Matrix& matrix) {
-		if (matrix.is_empty()) throw "operator << - матрица пустая";
+	ostream& operator << (ostream& os, Matrix& matrix) {
+		auto width = os.width();
+		if (width == 0) width = 8;
+
+		if (matrix.is_empty()) {
+			os << setw(width) << "Матрица пустая" << endl;
+			return os;
+		}
+
 		for (size_t i = 0; i < matrix.n; i++) {
 			for (size_t j = 0; j < matrix.m; j++)
-				out << *(matrix.matrix + i * matrix.m + j) << " ";
-			out << endl;
+				os << setw(width) << *(matrix.matrix + i * matrix.m + j) << " ";
+			os << endl;
 		}
-		return out;
+
+		return os;
 	}
 
 	/* Перегрузка оператора [] */
 	Matrix::Row Matrix::operator[](size_t x) {
+		if (x <= 0 || x >= this->n) throw "Выход за пределы.";
 		return Row(this, x);
 	}
 
 	const Matrix::Row Matrix::operator[](size_t x) const {
+		if (x <= 0 || x >= this->n) throw "Выход за пределы.";
 		return Row(this, x);
 	}
 
 	double Matrix::Row::operator[](size_t x) const {
+		if (x <= 0 || x >= this->owner->m) throw "Выход за пределы.";
 		return *(this->owner->matrix + this->index * this->owner->n + x);
 	}
 
 	double& Matrix::Row::operator[](size_t x) {
+		if (x <= 0 || x >= this->owner->m) throw "Выход за пределы.";
 		return *(this->owner->matrix + this->index * this->owner->n + x);
 	}
 
