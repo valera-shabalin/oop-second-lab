@@ -6,7 +6,7 @@ using namespace std;
 
 namespace mat {
 	size_t Matrix::static_id = 0;
-	bool Matrix::debug = false;
+	bool Matrix::debug = true;
 
 	/* Конструктор для строки */
 	Matrix::Row::Row(const Matrix* owner, size_t i) {
@@ -44,9 +44,9 @@ namespace mat {
 	}
 
 	/* Копирующий конструктор */
-	Matrix::Matrix(const Matrix& other) {
+	Matrix::Matrix(const Matrix& other) : Matrix() {
 		*this = other;
-		if (debug) cout << "Конструктор копирования " << this->id << endl;
+		if (debug) cout << "Конструктор копирования - копируем " << this->id << " <- " << other.id << endl;
 	}
 
 	/* Копирующий оператор = */

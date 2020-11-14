@@ -22,10 +22,10 @@ int main() {
 
 	Matrix e_matrix = Matrix(n, m, f_array);
 	Matrix t_matrix = Matrix(x, y, s_array);
-	Matrix m_matrix = Matrix(9);
+	Matrix m_matrix = Matrix(3);
 
 	/* Проверка перегрузок */
-	cout << "Проверка перегрузок *=, +=, -=: " << endl 
+	/*cout << "Проверка перегрузок *=, +=, -=: " << endl 
 		 << "e_matrix: " << endl << e_matrix
 		 << "t_matrix: " << endl << t_matrix;
 
@@ -43,12 +43,20 @@ int main() {
 
 	cout << "Перегрузка t_matrix *= 5: " << endl;
 	t_matrix *= 5;
-	cout << t_matrix;
+	cout << t_matrix;*/
+
+	/* Проверка внешних операторов */
+	Matrix summ_matrix = e_matrix + t_matrix;
+	cout << "e_matrix + t_matrix = " << endl << summ_matrix;
+	Matrix diff_matrix = e_matrix - t_matrix;
+	cout << "e_matrix - t_matrix = " << endl << diff_matrix;
+	Matrix multiply_matrix = e_matrix * t_matrix;
+	cout << "e_matrix * t_matrix = " << endl << multiply_matrix;
 
 	/* Перегрузка оператора [][] */
 	cout << "Проверка перегрузки [][]. Получим элемент e_matrix[1][1]: " << e_matrix[1][1] << endl;
 	e_matrix[1][1] = 100;
-	cout << "Проверка перегрузки [][]. Получим элемент e_matrix[1][1]: " << e_matrix[1][1] << endl;
+	cout << "Проверка перегрузки [][]. Сохранили в элемент e_matrix[1][1] значение 100: " << e_matrix[1][1] << endl;
 
 	return 0;
 }
