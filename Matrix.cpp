@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <functional>
 #include <iomanip> 
 
 #include "Matrix.h"
@@ -34,6 +35,23 @@ namespace mat {
 
 	/* Конструктор с параметрами размера матрицы */
 	Matrix::Matrix(size_t n) : Matrix::Matrix(n, n) {}
+
+	/* Конструктор, принимающий лямбда-выражение */
+	Matrix::Matrix(size_t n, size_t m, double(*func)()) {
+		this->id = ++static_id;
+
+		if (n != 0 && m != 0) {
+			this->matrix = new double[n * m]();
+			this->n = n;
+			this->m = m;
+		}
+
+		for (size_t i = 0; i < n * m; i++)
+			*(this->matrix + i) = func();
+
+		if (debug)
+			cout << "Конструктор " << this->id << endl;
+	}
 
 	/* Деструктор */
 	Matrix::~Matrix() {

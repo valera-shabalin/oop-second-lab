@@ -6,6 +6,14 @@
 using namespace std;
 using namespace mat;
 
+int rand_int(int min, int max) {
+	return min + rand() % (max - min);
+}
+
+double rand_double(double min, double max) {
+	return min + (double)rand() / RAND_MAX * (max - min);
+}
+
 int main() {
 	setlocale(LC_CTYPE, "Rus");
 
@@ -56,13 +64,13 @@ int main() {
 	Matrix multiply_matrix = e_matrix * t_matrix;
 	cout << "e_matrix * t_matrix = " << endl << multiply_matrix;*/
 
-	cout << "First matrix: " << endl << f_matrix;
-	cout << "Second matrix: " << endl << s_matrix;
+	auto func1 = []()->double { return rand_int(-10, 10); };
+	auto func2 = []()->double { return rand_int(0, 20); };
 
-	Matrix summ_matrix = f_matrix + s_matrix;
+	Matrix m1(2, 2, func1);
+	Matrix m2(2, 2, func2);
 
-	cout << "Summ = " << endl << summ_matrix;
-
+	cout << m1;
 
 	/* Перегрузка оператора [][] */
 	/*cout << "Проверка перегрузки [][]. Получим элемент e_matrix[1][1]: " << e_matrix[1][1] << endl;

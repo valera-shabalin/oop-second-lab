@@ -26,6 +26,7 @@ namespace mat {
 		/* Конструкторы и деструктор */
 		Matrix(size_t n, size_t m, double* matrix = nullptr);
 		explicit Matrix(size_t n = 0);
+		Matrix(size_t n, size_t m, double(*func)());
 		
 		~Matrix();
 
