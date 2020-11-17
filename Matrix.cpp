@@ -290,6 +290,14 @@ namespace mat {
 		}
 		return matrix;
 	}
+
+	/* Функция для генерации случайных матриц */
+	Matrix generate_matrix(size_t n, size_t m, double min, double max) {
+		double* matrix = new double[n * m];
+		for (size_t i = 0; i < n * m; i++)
+			*(matrix + i) = min + (double)rand() / RAND_MAX * (max - min);
+		return move(Matrix(n, m, matrix));
+	}
 }
 
 

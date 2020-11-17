@@ -10,19 +10,22 @@ int main() {
 	setlocale(LC_CTYPE, "Rus");
 
 	/* Инициализация переменных */
-	size_t n = 0, m = 0, x = 0, y = 0;
+	size_t n = 0, m = 0;
 
 	cout << "Введите размер первой матрицы: ";
 	cin >> n >> m;
 	double* f_array = create_matrix(n, m);
 
 	cout << "Введите размер второй матрицы: ";
-	cin >> x >> y;
+	cin >> n >> m;
 	double* s_array = create_matrix(n, m);
 
-	Matrix e_matrix = Matrix(n, m, f_array);
+	Matrix f_matrix = generate_matrix(2, 2);
+	Matrix s_matrix = generate_matrix(2, 2);
+
+	/*Matrix e_matrix = Matrix(n, m, f_array);
 	Matrix t_matrix = Matrix(x, y, s_array);
-	Matrix m_matrix = Matrix(3);
+	Matrix m_matrix = Matrix(3);*/
 
 	/* Проверка перегрузок */
 	/*cout << "Проверка перегрузок *=, +=, -=: " << endl 
@@ -46,17 +49,25 @@ int main() {
 	cout << t_matrix;*/
 
 	/* Проверка внешних операторов */
-	Matrix summ_matrix = e_matrix + t_matrix;
+	/*Matrix summ_matrix = e_matrix + t_matrix;
 	cout << "e_matrix + t_matrix = " << endl << summ_matrix;
 	Matrix diff_matrix = e_matrix - t_matrix;
 	cout << "e_matrix - t_matrix = " << endl << diff_matrix;
 	Matrix multiply_matrix = e_matrix * t_matrix;
-	cout << "e_matrix * t_matrix = " << endl << multiply_matrix;
+	cout << "e_matrix * t_matrix = " << endl << multiply_matrix;*/
+
+	cout << "First matrix: " << endl << f_matrix;
+	cout << "Second matrix: " << endl << s_matrix;
+
+	Matrix summ_matrix = f_matrix + s_matrix;
+
+	cout << "Summ = " << endl << summ_matrix;
+
 
 	/* Перегрузка оператора [][] */
-	cout << "Проверка перегрузки [][]. Получим элемент e_matrix[1][1]: " << e_matrix[1][1] << endl;
+	/*cout << "Проверка перегрузки [][]. Получим элемент e_matrix[1][1]: " << e_matrix[1][1] << endl;
 	e_matrix[1][1] = 100;
-	cout << "Проверка перегрузки [][]. Сохранили в элемент e_matrix[1][1] значение 100: " << e_matrix[1][1] << endl;
+	cout << "Проверка перегрузки [][]. Сохранили в элемент e_matrix[1][1] значение 100: " << e_matrix[1][1] << endl;*/
 
 	return 0;
 }

@@ -75,8 +75,8 @@ namespace mat {
 
 	/* Внешние функции */
 	double* create_matrix(size_t n, size_t m);
+	Matrix generate_matrix(size_t n = 2, size_t m = 2, double min = 0, double max = 20);
 }
-
 
 #endif
 
