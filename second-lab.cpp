@@ -17,20 +17,6 @@ double rand_double(double min, double max) {
 int main() {
 	setlocale(LC_CTYPE, "Rus");
 
-	/* Инициализация переменных */
-	size_t n = 0, m = 0;
-
-	cout << "Введите размер первой матрицы: ";
-	cin >> n >> m;
-	double* f_array = create_matrix(n, m);
-
-	cout << "Введите размер второй матрицы: ";
-	cin >> n >> m;
-	double* s_array = create_matrix(n, m);
-
-	Matrix f_matrix = generate_matrix(2, 2);
-	Matrix s_matrix = generate_matrix(2, 2);
-
 	/*Matrix e_matrix = Matrix(n, m, f_array);
 	Matrix t_matrix = Matrix(x, y, s_array);
 	Matrix m_matrix = Matrix(3);*/
@@ -64,13 +50,14 @@ int main() {
 	Matrix multiply_matrix = e_matrix * t_matrix;
 	cout << "e_matrix * t_matrix = " << endl << multiply_matrix;*/
 
-	auto func1 = []()->double { return rand_int(-10, 10); };
-	auto func2 = []()->double { return rand_int(0, 20); };
+	auto func1 = [](size_t x, size_t y)->double { return rand_int(0, 10); };
+	auto func2 = [](size_t x, size_t y)->double { return rand_int(0, 20); };
 
 	Matrix m1(2, 2, func1);
 	Matrix m2(2, 2, func2);
 
-	cout << m1;
+	cout << "Первая матрица: " << endl << m1;
+	cout << "Вторая матрица: " << endl << m2;
 
 	/* Перегрузка оператора [][] */
 	/*cout << "Проверка перегрузки [][]. Получим элемент e_matrix[1][1]: " << e_matrix[1][1] << endl;

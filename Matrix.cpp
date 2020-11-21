@@ -37,7 +37,7 @@ namespace mat {
 	Matrix::Matrix(size_t n) : Matrix::Matrix(n, n) {}
 
 	/* Конструктор, принимающий лямбда-выражение */
-	Matrix::Matrix(size_t n, size_t m, double(*func)()) {
+	Matrix::Matrix(size_t n, size_t m, double(*func)(size_t, size_t)) {
 		this->id = ++static_id;
 
 		if (n != 0 && m != 0) {
@@ -46,8 +46,9 @@ namespace mat {
 			this->m = m;
 		}
 
-		for (size_t i = 0; i < n * m; i++)
-			*(this->matrix + i) = func();
+		for (size_t i = 0; i < n; i++)
+			for (size_t j = 0; j < m; j++)
+				*(this->matrix + i * m + j) = func(i, j);
 
 		if (debug)
 			cout << "Конструктор " << this->id << endl;
