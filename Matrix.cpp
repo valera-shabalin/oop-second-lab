@@ -77,11 +77,11 @@ namespace mat {
 	/* Перемещающий конструктор */
 	Matrix::Matrix(Matrix&& other) noexcept : Matrix() {
 		*this = move(other);
-		if (debug) cout << "Конструктор перемещения " << other.id << endl;
 	}
 
 	/* Перемещающий оператор = */
 	Matrix& Matrix::operator=(Matrix&& other) noexcept {
+		if (debug) cout << "Конструктор перемещения " << other.id << endl;
 		if (this == &other) return *this;
 
 		this->make_null();
