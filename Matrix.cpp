@@ -41,9 +41,6 @@ namespace mat {
 		for (size_t i = 0; i < n; i++)
 			for (size_t j = 0; j < m; j++)
 				*(this->matrix + i * m + j) = func(i, j);
-
-		if (debug)
-			cout << "Конструктор " << this->id << endl;
 	}
 
 	/* Деструктор */
