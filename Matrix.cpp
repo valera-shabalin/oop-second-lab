@@ -37,15 +37,7 @@ namespace mat {
 	Matrix::Matrix(size_t n) : Matrix::Matrix(n, n) {}
 
 	/* Конструктор, принимающий лямбда-выражение */
-	Matrix::Matrix(size_t n, size_t m, double(*func)(size_t, size_t)) {
-		this->id = ++static_id;
-
-		if (n != 0 && m != 0) {
-			this->matrix = new double[n * m]();
-			this->n = n;
-			this->m = m;
-		}
-
+	Matrix::Matrix(size_t n, size_t m, double(*func)(size_t, size_t)) : Matrix(n, m) {
 		for (size_t i = 0; i < n; i++)
 			for (size_t j = 0; j < m; j++)
 				*(this->matrix + i * m + j) = func(i, j);
@@ -66,11 +58,11 @@ namespace mat {
 	/* Копирующий конструктор */
 	Matrix::Matrix(const Matrix& other) : Matrix() {
 		*this = other;
-		if (debug) cout << "Конструктор копирования - копируем " << this->id << " <- " << other.id << endl;
 	}
 
 	/* Копирующий оператор = */
 	const Matrix& Matrix::operator=(const Matrix& other) {
+		if (debug) cout << "Конструктор копирования - копируем " << this->id << " <- " << other.id << endl;
 		if (this == &other) return *this;
 
 		size_t size = other.get_size();
@@ -86,7 +78,7 @@ namespace mat {
 	}
 
 	/* Перемещающий конструктор */
-	Matrix::Matrix(Matrix&& other) : Matrix() {
+	Matrix::Matrix(Matrix&& other) noexcept : Matrix() {
 		*this = move(other);
 		if (debug) cout << "Конструктор перемещения " << other.id << endl;
 	}
@@ -168,9 +160,6 @@ namespace mat {
 		if (!this->allow_summ(other))
 			throw "operator+ - матрицы разных размеров";
 
-		if (other.is_empty())
-			throw "operator+ - матрица пустая";
-
 		for (size_t i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) += *(other.matrix + i);
 
@@ -179,19 +168,13 @@ namespace mat {
 
 	/* Перегрузка оператора + */
 	Matrix Matrix::operator+(const Matrix& other) {
-		Matrix tmp(*this);
-		tmp += other;
-
-		return move(tmp);
+		return move(Matrix(*this) += other);
 	}
 
 	/* Перегрузка оператора -= */
 	Matrix& Matrix::operator-=(const Matrix& other) {
 		if (!this->allow_summ(other))
 			throw "operator-= - матрицы разных размеров";
-
-		if (other.is_empty())
-			throw "operator-= - матрица пустая";
 
 		for (size_t i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) -= *(other.matrix + i);
@@ -201,10 +184,7 @@ namespace mat {
 
 	/* Перегрузка оператора - */
 	Matrix Matrix::operator-(const Matrix& other) {
-		Matrix tmp(*this);
-		tmp -= other;
-
-		return move(tmp);
+		return move(Matrix(*this) -= other);
 	}
 	
 	/* Перегрузка оператора *= на другую матрицу */
@@ -212,14 +192,9 @@ namespace mat {
 		if (!this->allow_multiply(other)) 
 			throw "operator*= - матрицы разных размеров";
 
-		if (other.is_empty()) 
-			throw "operator*= - матрица пустая";
-
 		size_t new_size = this->n * other.m;
-		double* matrix = new double[new_size];
+		double* matrix = new double[new_size]();
 
-		for (size_t i = 0; i < new_size; i++)
-			*(matrix + i) = 0;
 		for (size_t i = 0; i < this->n; i++)
 			for (size_t j = 0; j < other.m; j++)
 				for (size_t k = 0; k < this->m; k++)
@@ -235,10 +210,7 @@ namespace mat {
 
 	/* Перегрузка оператора * */
 	Matrix Matrix::operator*(const Matrix& other) {
-		Matrix tmp(*this);
-		tmp *= other;
-
-		return move(tmp);
+		return move(Matrix(*this) *= other);
 	}
 
 	/* Перегрузка оператора *= на скаляр */
@@ -248,15 +220,13 @@ namespace mat {
 
 		for (size_t i = 0; i < this->get_size(); i++)
 			*(this->matrix + i) *= k;
+
 		return *this;
 	}
 
 	/* Перегрузка оператора * на скаляр */
 	Matrix Matrix::operator*(double k) {
-		Matrix tmp(*this);
-		tmp *= k;
-
-		return move(tmp);
+		return move(Matrix(*this) *= k);
 	}
 
 	/* Переопределение оператора вывода на поток << */
@@ -280,22 +250,22 @@ namespace mat {
 
 	/* Перегрузка оператора [] */
 	Matrix::Row Matrix::operator[](size_t x) {
-		if (x <= 0 || x >= this->n) throw "Выход за пределы.";
+		if (x >= this->n) throw "Выход за пределы.";
 		return Row(this, x);
 	}
 
 	const Matrix::Row Matrix::operator[](size_t x) const {
-		if (x <= 0 || x >= this->n) throw "Выход за пределы.";
+		if (x >= this->n) throw "Выход за пределы.";
 		return Row(this, x);
 	}
 
 	double Matrix::Row::operator[](size_t x) const {
-		if (x <= 0 || x >= this->owner->m) throw "Выход за пределы.";
+		if (x >= this->owner->m) throw "Выход за пределы.";
 		return *(this->owner->matrix + this->index * this->owner->n + x);
 	}
 
 	double& Matrix::Row::operator[](size_t x) {
-		if (x <= 0 || x >= this->owner->m) throw "Выход за пределы.";
+		if (x >= this->owner->m) throw "Выход за пределы.";
 		return *(this->owner->matrix + this->index * this->owner->n + x);
 	}
 
@@ -308,14 +278,6 @@ namespace mat {
 			*(matrix + i) = x;
 		}
 		return matrix;
-	}
-
-	/* Функция для генерации случайных матриц */
-	Matrix generate_matrix(size_t n, size_t m, double min, double max) {
-		double* matrix = new double[n * m];
-		for (size_t i = 0; i < n * m; i++)
-			*(matrix + i) = min + (double)rand() / RAND_MAX * (max - min);
-		return move(Matrix(n, m, matrix));
 	}
 }
 
